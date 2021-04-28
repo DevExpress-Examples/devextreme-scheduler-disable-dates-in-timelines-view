@@ -100,30 +100,9 @@ $(function () {
             return itemElement;
         },
 
-        onAppointmentFormOpening: function(e) {
-            var startDate = new Date(e.appointmentData.startDate);
-            var endDate = new Date(e.appointmentData.endDate);
-            if(!isValidAppointmentDate(startDate, endDate)) {
-                e.cancel = true;
-                notifyDisableDate();
-            }
-            applyDisableDatesToDateEditors(e.form);
-        },
-
-        onAppointmentAdding: function(e) {
-            debugger
-            if(!isValidAppointment(e.component, e.appointmentData)) {
-                e.cancel = true;
-                notifyDisableDate();
-            }
-        },
-
-        onAppointmentUpdating: function(e) {
-            if(!isValidAppointment(e.component, e.newData)) {
-                e.cancel = true;
-                notifyDisableDate();
-            }
-        }
+        onAppointmentFormOpening: onAppointmentFormOpening,
+        onAppointmentAdding: onAppointmentChanging,
+        onAppointmentUpdating: onAppointmentChanging
     });
 });
 
@@ -146,10 +125,22 @@ function isHoliday(starDate, endDate) {
     });
 }
 
+function hasIntersect(startA, endA, startB, endB) {
+    if ((startA <= startB && endB <= endA) ||
+        (startB <= startA && endA <= endB)) {
+        return true;
+    }
+
+    return (startA <= startB && startB < endA) ||
+           (startA < endB && endB <= endA);
+}
+
 function isDinner(startDate, endDate) {
-    return startDate.getDate() === endDate.getDate() &&
-           startDate.getHours() >= dinnerTime.start &&
-           endDate.getHours() <= dinnerTime.end;
+    var todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
+    var todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
+
+    return hasIntersect(todayDinnerStart, todayDinnerEnd,
+                        startDate.getTime(), endDate.getTime());
 }
 
 function getHolidayCell(startDate, endDate) {
@@ -170,36 +161,28 @@ function getDinnerCell() {
     return element;
 }
 
-function notifyDisableDate() {
-    DevExpress.ui.notify("Cannot create or move an appointment/event to disabled time/date regions.", "warning", 1000);
+function onAppointmentChanging(e) {
+    var startDate = e.appointmentData ? new Date(e.appointmentData.startDate) 
+                                      : new Date(e.newData.startDate);
+
+    var endDate = e.appointmentData ? new Date(e.appointmentData.endDate)
+                                    : new Date(e.newData.endDate);
+
+    if(!isValidAppointmentDate(startDate, endDate)) {
+        e.cancel = true;
+        notifyDisableDate();
+    }
 }
 
-function isValidAppointment(component, appointmentData) {
-    var startDate = new Date(appointmentData.startDate);
-    var endDate = new Date(appointmentData.endDate);
+function onAppointmentFormOpening(e) {
+    var startDate = new Date(e.appointmentData.startDate);
+    var endDate = new Date(e.appointmentData.endDate);
 
-    var cellDuration = component.option('cellDuration');
-    return isValidAppointmentInterval(startDate, endDate, cellDuration);
-}
-
-function isValidAppointmentInterval(startDate, endDate, cellDuration) {
-    var edgeEndDate = new Date(endDate.getTime() - 1);
-
-    if (!isValidAppointmentDate(edgeEndDate)) {
-        return false;
+    if(!isValidAppointmentDate(startDate, endDate)) {
+        e.cancel = true;
+        notifyDisableDate();
     }
-
-    var durationInMs = cellDuration * 60 * 1000;
-    var date = startDate;
-    while (date <= endDate) {
-        if (!isValidAppointmentDate(date)) {
-            return false;
-        }
-        var newDateTime = date.getTime() + durationInMs - 1;
-        date.setTime(newDateTime);
-    }
-
-    return true;
+    applyDisableDatesToDateEditors(e.form);
 }
 
 function isValidAppointmentDate(startDate, endDate) {
@@ -217,4 +200,8 @@ function applyDisableDatesToDateEditors(form) {
 
     var endDateEditor = form.getEditor('endDate');
     endDateEditor.option('disabledDates', holidaysList);
+}
+
+function notifyDisableDate() {
+    DevExpress.ui.notify("Cannot create or move an appointment/event to disabled time/date regions.", "warning", 1000);
 }
