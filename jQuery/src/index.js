@@ -131,8 +131,8 @@ function hasIntersect(startA, endA, startB, endB) {
         return true;
     }
 
-    return (startA <= startB && startB < endA) ||
-           (startA < endB && endB <= endA);
+    return (startA < startB && startB < endA) ||
+           (startA < endB && endB < endA);
 }
 
 function isDinner(startDate, endDate) {
