@@ -1,28 +1,103 @@
 <template>
-  <Home/>
+  <DxScheduler
+    :data-source="dataSource"
+    :current-date="currentDate"
+    :views="views"
+    :current-view="currentView"
+    :height="600"
+    :show-all-day-panel="false"
+    :first-day-of-week="1"
+    :cellDuration="60"
+    :start-day-hour="9"
+    :end-day-hour="19"
+    data-cell-template="dataCellTemplate"
+    :on-appointment-form-opening="onAppointmentFormOpening"
+    :on-appointment-adding="onAppointmentChanging"
+    :on-appointment-updating="onAppointmentChanging"
+  >
+    <template #dataCellTemplate="{ data: cellData }">
+      <DataCell :cell-data="cellData" />
+    </template>
+  </DxScheduler>
 </template>
 
 <script>
+import "devextreme/dist/css/dx.common.css";
+import "devextreme/dist/css/dx.material.blue.light.compact.css";
+import { DxScheduler } from "devextreme-vue/scheduler";
+import { data, holidays } from "./data.js";
+import notify from "devextreme/ui/notify";
+import Utils from "./utils.js";
+import './style.css';
 
-import 'devextreme/dist/css/dx.common.css';
-import 'devextreme/dist/css/dx.material.blue.light.compact.css'
-import Home from './components/Home.vue'
+import DataCell from "./components/DataCell.vue";
 
 export default {
-  name: 'App',
+  name: "App",
   components: {
-    Home
-  }
-}
-</script>
+    DxScheduler,
+    DataCell,
+  },
+  data() {
+    return {
+      views: [
+        {
+          type: "timelineDay",
+          intervalCount: 3
+        }
+      ],
+      currentView: "timelineDay",
+      currentDate: new Date(2021, 4, 3),
+      dataSource: data,
+    };
+  },
+  methods: {
+    onAppointmentChanging: function (e) {
+      var startDate = e.appointmentData
+        ? new Date(e.appointmentData.startDate)
+        : new Date(e.newData.startDate);
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  color: #2c3e50;
-  margin: 50px 50px;
-  width: 90vh;
-}
-</style>
+      var endDate = e.appointmentData
+        ? new Date(e.appointmentData.endDate)
+        : new Date(e.newData.endDate);
+
+      if (!Utils.isValidAppointmentDate(startDate, endDate)) {
+        e.cancel = true;
+        this.notifyDisableDate();
+      }
+    },
+
+    applyDisableDatesToDateEditors: function (form) {
+      var holidaysList = [];
+      for (let i = 0; i < holidays.length; i++) {
+        holidaysList.push(holidays[i].date);
+      }
+
+      var startDateEditor = form.getEditor("startDate");
+      startDateEditor.option("disabledDates", holidaysList);
+
+      var endDateEditor = form.getEditor("endDate");
+      endDateEditor.option("disabledDates", holidaysList);
+    },
+
+    notifyDisableDate: function () {
+      notify(
+        "Cannot create or move an appointment/event to disabled time/date regions.",
+        "warning",
+        1000
+      );
+    },
+
+    onAppointmentFormOpening: function (e) {
+      var startDate = new Date(e.appointmentData.startDate);
+      var endDate = new Date(e.appointmentData.endDate);
+
+      if (!Utils.isValidAppointmentDate(startDate, endDate)) {
+        e.cancel = true;
+        this.notifyDisableDate();
+      }
+      this.applyDisableDatesToDateEditors(e.form);
+    },
+  },
+};
+</script>
