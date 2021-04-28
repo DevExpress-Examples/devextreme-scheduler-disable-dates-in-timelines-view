@@ -110,10 +110,16 @@ export class AppComponent {
     endDateEditor.option('disabledDates', holidaysList);
   }
 
-  getCellName(startDate: Date, endDate: Date, cell: any) {
-    if (this.isHoliday(startDate, endDate)) {
+  getCellName(cell: any) {
+    const startDate = cell.startDate;
+    const endDate = cell.endDate;
+
+    const isHoliday = this.isHoliday(startDate, endDate);
+    const isDinner = this.isDinner(startDate, endDate);
+
+    if (isHoliday) {
       return this.getHoliday(startDate, endDate).name;
-    } else if (this.isDinner(startDate, endDate)) {
+    } else if (isDinner) {
       return "Dinner Time";
     }
 

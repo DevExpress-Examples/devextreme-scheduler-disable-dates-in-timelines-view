@@ -132,7 +132,7 @@ function isHoliday(starDate, endDate) {
 }
 
 function getHoliday(startDate, endDate) {
-  for (let i = 0; i < holidays.length; i++) {
+  for (var i = 0; i < holidays.length; i++) {
       if (isThatHoliday(holidays[i], startDate, endDate)) {
           return holidays[i];
       }
@@ -187,7 +187,7 @@ function isValidAppointmentDate(startDate, endDate) {
 
 function applyDisableDatesToDateEditors(form) {
     var holidaysList = [];
-    for (let i = 0; i < holidays.length; i++) {
+    for (var i = 0; i < holidays.length; i++) {
         holidaysList.push(holidays[i].date);
     } 
 

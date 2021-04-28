@@ -53,11 +53,11 @@ export default {
   },
   methods: {
     onAppointmentChanging: function (e) {
-      var startDate = e.appointmentData
+      const startDate = e.appointmentData
         ? new Date(e.appointmentData.startDate)
         : new Date(e.newData.startDate);
 
-      var endDate = e.appointmentData
+      const endDate = e.appointmentData
         ? new Date(e.appointmentData.endDate)
         : new Date(e.newData.endDate);
 
@@ -68,15 +68,15 @@ export default {
     },
 
     applyDisableDatesToDateEditors: function (form) {
-      var holidaysList = [];
+      const holidaysList = [];
       for (let i = 0; i < holidays.length; i++) {
         holidaysList.push(holidays[i].date);
       }
 
-      var startDateEditor = form.getEditor("startDate");
+      const startDateEditor = form.getEditor("startDate");
       startDateEditor.option("disabledDates", holidaysList);
 
-      var endDateEditor = form.getEditor("endDate");
+      const endDateEditor = form.getEditor("endDate");
       endDateEditor.option("disabledDates", holidaysList);
     },
 
@@ -89,8 +89,8 @@ export default {
     },
 
     onAppointmentFormOpening: function (e) {
-      var startDate = new Date(e.appointmentData.startDate);
-      var endDate = new Date(e.appointmentData.endDate);
+      const startDate = new Date(e.appointmentData.startDate);
+      const endDate = new Date(e.appointmentData.endDate);
 
       if (!Utils.isValidAppointmentDate(startDate, endDate)) {
         e.cancel = true;

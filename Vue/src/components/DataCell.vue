@@ -17,6 +17,7 @@ export default {
     markDataCell(cellData) {
       const startDate = cellData.startDate;
       const endDate = cellData.endDate;
+
       const isHoliday = Utils.isHoliday(startDate, endDate);
       const isDinner = Utils.isDinner(startDate, endDate);
 
@@ -36,7 +37,7 @@ export default {
       }
 
       return text;
-    },
-  },
+    }
+  }
 };
 </script>

@@ -31,8 +31,8 @@ export default class Utils {
   }
 
   static isDinner(startDate, endDate) {
-    var todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
-    var todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
+    const todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
+    const todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
 
     return Utils.hasIntersect(todayDinnerStart, todayDinnerEnd,
       startDate.getTime(), endDate.getTime());
@@ -40,5 +40,21 @@ export default class Utils {
 
   static isValidAppointmentDate(startDate, endDate) {
     return !Utils.isHoliday(startDate, endDate) && !Utils.isDinner(startDate, endDate);
+  }
+
+  static getCellName(cell) {
+    const startDate = cell.startDate;
+    const endDate = cell.endDate;
+
+    const isHoliday = this.isHoliday(startDate, endDate);
+    const isDinner = this.isDinner(startDate, endDate);
+
+    if (isHoliday) {
+      return Utils.getHoliday(startDate, endDate).name;
+    } else if (isDinner) {
+      return "Dinner Time";
+    }
+
+    return cell.text;
   }
 }
