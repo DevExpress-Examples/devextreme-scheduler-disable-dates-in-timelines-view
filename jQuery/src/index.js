@@ -91,13 +91,18 @@ $(function () {
             var isHolidayCell = isHoliday(startDate, endDate);
             var isDinnerCell = isDinner(startDate, endDate);
 
+            var element;
+
             if (isHolidayCell) {
-                return getHolidayCell(startDate, endDate);
+                const holiday = getHoliday(startDate, endDate);
+                element = $(`<div>${holiday.name}</div>`);
+                element.addClass('holiday');
             } else if (isDinnerCell) {
-                return getDinnerCell();
+              element = $('<div>Dinner time</div>');
+              element.addClass('dinner');
             }
 
-            return itemElement;
+            return itemElement.append(element);
         },
 
         onAppointmentFormOpening: onAppointmentFormOpening,
@@ -107,6 +112,7 @@ $(function () {
 });
 
 var dinnerTime = { start: 12, end: 13 };
+
 var holidays = [
     {
         date: new Date(2021, 4, 4),
@@ -125,6 +131,14 @@ function isHoliday(starDate, endDate) {
     });
 }
 
+function getHoliday(startDate, endDate) {
+  for (let i = 0; i < holidays.length; i++) {
+      if (isThatHoliday(holidays[i], startDate, endDate)) {
+          return holidays[i];
+      }
+  }
+}
+
 function hasIntersect(startA, endA, startB, endB) {
     if ((startA <= startB && endB <= endA) ||
         (startB <= startA && endA <= endB)) {
@@ -141,24 +155,6 @@ function isDinner(startDate, endDate) {
 
     return hasIntersect(todayDinnerStart, todayDinnerEnd,
                         startDate.getTime(), endDate.getTime());
-}
-
-function getHolidayCell(startDate, endDate) {
-    for (let i = 0; i < holidays.length; i++) {
-        if (isThatHoliday(holidays[i], startDate, endDate)) {
-            var element = $('<div>' + holidays[i].name + '</div>');
-            element.addClass('holiday');
-
-            return element;
-        }
-    }
-}
-
-function getDinnerCell() {
-    var element = $('<div>Dinner time</div>');
-    element.addClass('dinner');
-
-    return element;
 }
 
 function onAppointmentChanging(e) {
