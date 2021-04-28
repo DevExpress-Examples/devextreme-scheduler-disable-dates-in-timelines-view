@@ -3,7 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
-import { DxButtonModule } from "devextreme-angular/ui/button"
+import { DxSchedulerModule } from "devextreme-angular/ui/scheduler"
 
 @NgModule({
   declarations: [
@@ -12,7 +12,7 @@ import { DxButtonModule } from "devextreme-angular/ui/button"
   imports: [
     BrowserModule,
     AppRoutingModule,
-    DxButtonModule
+    DxSchedulerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

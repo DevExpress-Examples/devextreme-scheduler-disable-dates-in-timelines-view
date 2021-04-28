@@ -1,3 +1,27 @@
 <div class="default-style">
-  <dx-button [text]="buttonText" (onClick)="onClick($event)"></dx-button>
+<dx-scheduler
+  [dataSource]="dataSource"
+  [views]="views"
+  [currentView]="currentView"
+  [currentDate]="currentDate"
+  [firstDayOfWeek]="0"
+  [startDayHour]="9"
+  [endDayHour]="19"
+  [cellDuration]="60"
+  [showAllDayPanel]="false"
+  [height]="600"
+  dataCellTemplate="dataCellTemplate"
+  (onAppointmentFormOpening)="onAppointmentFormOpening($event)"
+  (onAppointmentAdding)="onAppointmentChanging($event)"
+  (onAppointmentUpdating)="onAppointmentChanging($event)">
+
+    <div *dxTemplate="let dataCell of 'dataCellTemplate'"
+      [ngClass]="{
+        'dinner': isDinner(dataCell.startDate, dataCell.endDate),
+        'holiday': isHoliday(dataCell.startDate, dataCell.endDate)
+      }">
+      {{getCellName(dataCell.startDate, dataCell.endDate, dataCell)}}
+    </div>
+
+</dx-scheduler>
 </div>
