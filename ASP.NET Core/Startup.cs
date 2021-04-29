@@ -48,7 +48,7 @@ namespace ASP_NET_Core
             app.UseEndpoints(endpoints => {
                 endpoints.MapControllerRoute(
                     name: "default",
-                    pattern: "{controller=Home}/{action=Index}/{id?}");
+                    pattern: "{controller=Scheduler}/{action=Index}/{id?}");
             });
         }
     }

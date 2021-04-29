@@ -1,7 +1,18 @@
-.demo-container {
-    margin: 50px 50px;
-    width: 90vh;
+.holiday, .dinner {
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    font-size: xx-large;
+    font-weight: 600;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: white;
+    text-align: center;
 }
-body {
-    margin: 8px;
+
+.dinner {
+    background-image: repeating-linear-gradient(65deg, rgba(170, 147, 19, 0.3), rgba(170, 147, 19, 0.3) 4px, transparent 4px, transparent 9px);
+}
+
+.holiday {
+    background-image: repeating-linear-gradient(135deg, rgba(244, 67, 54, 0.1), rgba(244, 67, 54, 0.1) 4px, transparent 4px, transparent 9px);
 }
