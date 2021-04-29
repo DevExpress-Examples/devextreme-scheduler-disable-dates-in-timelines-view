@@ -63,15 +63,19 @@ export class AppComponent {
     const todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
     const todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
 
-    return this.hasIntersect(todayDinnerStart, todayDinnerEnd,
-      startDate.getTime(), endDate.getTime());
+    return this.hasIntersect(
+      todayDinnerStart, todayDinnerEnd,
+      startDate.getTime(), endDate.getTime()
+    );
   }
 
   onAppointmentChanging(e: any) {
-    const startDate = e.appointmentData ? new Date(e.appointmentData.startDate)
+    const startDate = e.appointmentData
+      ? new Date(e.appointmentData.startDate)
       : new Date(e.newData.startDate);
 
-    const endDate = e.appointmentData ? new Date(e.appointmentData.endDate)
+    const endDate = e.appointmentData
+      ? new Date(e.appointmentData.endDate)
       : new Date(e.newData.endDate);
 
     if (!this.isValidAppointmentDate(startDate, endDate)) {

@@ -20,10 +20,12 @@ const currentView = views[0].type;
 
 function App() {
   const onAppointmentChanging = function (e) {
-    const startDate = e.appointmentData ? new Date(e.appointmentData.startDate)
+    const startDate = e.appointmentData
+      ? new Date(e.appointmentData.startDate)
       : new Date(e.newData.startDate);
 
-      const endDate = e.appointmentData ? new Date(e.appointmentData.endDate)
+    const endDate = e.appointmentData
+      ? new Date(e.appointmentData.endDate)
       : new Date(e.newData.endDate);
 
     if (!Utils.isValidAppointmentDate(startDate, endDate)) {

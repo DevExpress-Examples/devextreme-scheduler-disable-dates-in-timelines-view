@@ -34,8 +34,10 @@ export default class Utils {
     var todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
     var todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
 
-    return Utils.hasIntersect(todayDinnerStart, todayDinnerEnd,
-      startDate.getTime(), endDate.getTime());
+    return Utils.hasIntersect(
+      todayDinnerStart, todayDinnerEnd,
+      startDate.getTime(), endDate.getTime()
+    );
   }
 
   static isValidAppointmentDate(startDate, endDate) {

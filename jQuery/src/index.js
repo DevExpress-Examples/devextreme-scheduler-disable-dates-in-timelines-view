@@ -153,16 +153,20 @@ function isDinner(startDate, endDate) {
     var todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
     var todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
 
-    return hasIntersect(todayDinnerStart, todayDinnerEnd,
-                        startDate.getTime(), endDate.getTime());
+    return hasIntersect(
+        todayDinnerStart, todayDinnerEnd,
+        startDate.getTime(), endDate.getTime()
+    );
 }
 
 function onAppointmentChanging(e) {
-    var startDate = e.appointmentData ? new Date(e.appointmentData.startDate) 
-                                      : new Date(e.newData.startDate);
+    var startDate = e.appointmentData 
+        ? new Date(e.appointmentData.startDate) 
+        : new Date(e.newData.startDate);
 
-    var endDate = e.appointmentData ? new Date(e.appointmentData.endDate)
-                                    : new Date(e.newData.endDate);
+    var endDate = e.appointmentData
+        ? new Date(e.appointmentData.endDate)
+        : new Date(e.newData.endDate);
 
     if(!isValidAppointmentDate(startDate, endDate)) {
         e.cancel = true;
