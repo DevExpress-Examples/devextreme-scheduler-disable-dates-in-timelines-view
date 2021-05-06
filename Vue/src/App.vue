@@ -5,8 +5,6 @@
     :views="views"
     :current-view="currentView"
     :height="600"
-    :show-all-day-panel="false"
-    :first-day-of-week="1"
     :cellDuration="60"
     :start-day-hour="9"
     :end-day-hour="19"
@@ -25,7 +23,7 @@
 import "devextreme/dist/css/dx.common.css";
 import "devextreme/dist/css/dx.material.blue.light.compact.css";
 import { DxScheduler } from "devextreme-vue/scheduler";
-import { data, holidays } from "./data.js";
+import { data, holiday } from "./data.js";
 import notify from "devextreme/ui/notify";
 import Utils from "./utils.js";
 import './style.css';
@@ -68,16 +66,13 @@ export default {
     },
 
     applyDisableDatesToDateEditors: function (form) {
-      const holidaysList = [];
-      for (let i = 0; i < holidays.length; i++) {
-        holidaysList.push(holidays[i].date);
-      }
+      const holidayDate = holiday.date;
 
       const startDateEditor = form.getEditor("startDate");
-      startDateEditor.option("disabledDates", holidaysList);
+      startDateEditor.option("disabledDates", [holidayDate]);
 
       const endDateEditor = form.getEditor("endDate");
-      endDateEditor.option("disabledDates", holidaysList);
+      endDateEditor.option("disabledDates", [holidayDate]);
     },
 
     notifyDisableDate: function () {

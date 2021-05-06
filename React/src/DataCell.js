@@ -15,7 +15,7 @@ export default function DataCell(props) {
 
   return (
     <div className={cssClasses}>
-      { Utils.getCellName(props.itemData) }
+      { Utils.getCellText(props.itemData) }
     </div>
   );
 }

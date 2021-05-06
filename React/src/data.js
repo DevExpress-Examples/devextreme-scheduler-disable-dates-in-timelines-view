@@ -1,11 +1,9 @@
 export const dinnerTime = { start: 12, end: 13 };
 
-export const holidays = [
-  {
-    date: new Date(2021, 4, 4),
-    name: 'Star Wars Day'
-  }
-];
+export const holiday = {
+  date: new Date(2021, 4, 4),
+  name: 'Star Wars Day'
+};
 
 export const data = [
   {

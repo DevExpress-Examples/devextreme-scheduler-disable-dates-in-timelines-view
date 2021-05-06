@@ -1,6 +1,6 @@
 <template>
   <div :class="markDataCell(cellData)">
-    {{ getCellName(cellData) }}
+    {{ getCellText(cellData) }}
   </div>
 </template>
 <script>
@@ -26,12 +26,12 @@ export default {
         dinner: isDinner,
       };
     },
-    getCellName({ startDate, endDate, text }) {
+    getCellText({ startDate, endDate, text }) {
       const isHoliday = Utils.isHoliday(startDate, endDate);
       const isDinner = Utils.isDinner(startDate, endDate);
 
       if (isHoliday) {
-        return Utils.getHoliday(startDate, endDate).name;
+        return Utils.getHoliday().name;
       } else if (isDinner) {
         return "Dinner Time";
       }

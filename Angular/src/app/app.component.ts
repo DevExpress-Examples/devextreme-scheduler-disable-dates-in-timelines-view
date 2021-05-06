@@ -27,27 +27,14 @@ export class AppComponent {
     });
   }
 
-  isThatHoliday(holiday: any, startDate: Date, endDate: Date) {
+  isHoliday(startDate: Date, endDate: Date) {
+    const holiday = this.dataService.getHoliday();
+
     return holiday.date.toLocaleDateString() === startDate.toLocaleDateString() &&
       holiday.date.toLocaleDateString() === endDate.toLocaleDateString();
-  }
-
-  isHoliday(starDate: Date, endDate: Date) {
-    return this.dataService.getHolidays().some(holiday =>
-      this.isThatHoliday(holiday, starDate, endDate));
   };
 
-  getHoliday(startDate: Date, endDate: Date) {
-    const holidays = this.dataService.getHolidays();
-
-    for (let i = 0; i < holidays.length; i++) {
-      if (this.isThatHoliday(holidays[i], startDate, endDate)) {
-        return holidays[i];
-      }
-    }
-  }
-
-  hasIntersect(startA: number, endA: number, startB: number, endB: number) {
+  hasIntersection(startA: number, endA: number, startB: number, endB: number) {
     if ((startA <= startB && endB <= endA) ||
       (startB <= startA && endA <= endB)) {
       return true;
@@ -63,7 +50,7 @@ export class AppComponent {
     const todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
     const todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
 
-    return this.hasIntersect(
+    return this.hasIntersection(
       todayDinnerStart, todayDinnerEnd,
       startDate.getTime(), endDate.getTime()
     );
@@ -100,21 +87,16 @@ export class AppComponent {
   }
 
   applyDisableDatesToDateEditors(form: any) {
-    const holidays = this.dataService.getHolidays();
-
-    const holidaysList = [];
-    for (let i = 0; i < holidays.length; i++) {
-      holidaysList.push(holidays[i].date);
-    }
+    const holidayDate = this.dataService.getHoliday().date;
 
     const startDateEditor = form.getEditor('startDate');
-    startDateEditor.option('disabledDates', holidaysList);
+    startDateEditor.option('disabledDates', [holidayDate]);
 
     const endDateEditor = form.getEditor('endDate');
-    endDateEditor.option('disabledDates', holidaysList);
+    endDateEditor.option('disabledDates', [holidayDate]);
   }
 
-  getCellName(cell: any) {
+  getCellText(cell: any) {
     const startDate = cell.startDate;
     const endDate = cell.endDate;
 
@@ -122,7 +104,7 @@ export class AppComponent {
     const isDinner = this.isDinner(startDate, endDate);
 
     if (isHoliday) {
-      return this.getHoliday(startDate, endDate).name;
+      return this.dataService.getHoliday().name;
     } else if (isDinner) {
       return "Dinner Time";
     }
