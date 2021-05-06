@@ -86,17 +86,33 @@ function renderCellTemplate(itemData, itemIndex, itemElement) {
     var isHolidayCell = isHoliday(startDate, endDate);
     var isDinnerCell = isDinner(startDate, endDate);
 
-    var element;
+    var element = $(`<div>${getCellText(itemData)}</div>`);
 
     if (isHolidayCell) {
-        element = $(`<div>${holiday.name}</div>`);
         element.addClass('holiday');
-    } else if (isDinnerCell) {
-      element = $('<div>Dinner time</div>');
-      element.addClass('dinner');
+    }
+
+    if (isDinnerCell) {
+        element.addClass('dinner');
     }
 
     return itemElement.append(element);
+}
+
+function getCellText(itemData) {
+    const startDate = itemData.startDate;
+    const endDate = itemData.endDate;
+
+    const isHoliday = this.isHoliday(startDate, endDate);
+    const isDinner = this.isDinner(startDate, endDate);
+
+    if (isHoliday) {
+        return holiday.name;
+    } else if (isDinner) {
+        return "Dinner Time";
+    }
+
+    return itemData.text;
 }
 
 function isValidAppointmentDate(startDate, endDate) {

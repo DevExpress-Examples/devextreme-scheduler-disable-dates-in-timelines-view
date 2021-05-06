@@ -1,21 +1,28 @@
-import React from 'react';
+import React, {useMemo} from 'react';
 import Utils from './utils.js';
 
-export default function DataCell(props) {
-  const { startDate, endDate } = props.itemData;
+function getClasses(startDate, endDate) {
+  const result = [];
+
   const isHoliday = Utils.isHoliday(startDate, endDate);
   const isDinner = Utils.isDinner(startDate, endDate);
-  const cssClasses = [];
 
   if(isHoliday) {
-    cssClasses.push('holiday');
+    result.push('holiday');
   } else if(isDinner) {
-    cssClasses.push('dinner');
+    result.push('dinner');
   }
+
+  return result
+}
+
+export default function DataCell(props) {
+  const { startDate, endDate } = props.data;
+  const cssClasses = useMemo(() => getClasses(startDate, endDate), [startDate, endDate]);
 
   return (
     <div className={cssClasses}>
-      { Utils.getCellText(props.itemData) }
+      { Utils.getCellText(props.data) }
     </div>
   );
 }

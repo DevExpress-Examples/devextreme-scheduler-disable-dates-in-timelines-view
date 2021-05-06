@@ -58,10 +58,6 @@ const notifyDisableDate = function () {
   notify("Cannot create or move an appointment/event to disabled time/date regions.", "warning", 1000);
 }
 
-const renderDataCell = function (itemData) {
-  return <DataCell itemData={itemData} />;
-}
-
 function App() {
   return (
     <Scheduler
@@ -73,7 +69,7 @@ function App() {
       startDayHour={9}
       endDayHour={19}
       cellDuration={60}
-      dataCellRender={renderDataCell}
+      dataCellComponent={DataCell}
       onAppointmentFormOpening={onAppointmentFormOpening}
       onAppointmentAdding={onAppointmentChanging}
       onAppointmentUpdating={onAppointmentChanging}
