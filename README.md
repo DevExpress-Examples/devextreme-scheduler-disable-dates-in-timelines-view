@@ -1,5 +1,4 @@
 # Scheduler - How to disable dates in the timeline view
-
 This example demonstrates how to create a scheduler with disabled dates in the timeline view.
 
-Main idea is to validate adding and updating appointments with 'onAppointmentFormOpening', 'onAppointmentAdding' and 'onAppointmentUpdating' handlers, 'dataCellTemplate' property used for appointment customization.
+The main idea is to validate the process of adding and updating appointments with the 'onAppointmentFormOpening', 'onAppointmentAdding', and 'onAppointmentUpdating' handlers. To visually highlight cells that cannot be edited, set a function for the 'dataCellTemplate' property. This function will affect the appointment customization.
