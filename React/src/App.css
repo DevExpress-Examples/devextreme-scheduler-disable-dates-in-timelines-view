@@ -1,4 +1,39 @@
-.main {
-  margin: 50px;
-  width: 90vw;
+#app-container {
+  position: relative;
+  width: 900px;
+  margin: 50px auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+}
+
+.holiday,
+.dinner {
+  height: 100%;
+  width: 100%;
+  z-index: 1;
+  font-size: xx-large;
+  font-weight: 600;
+  -webkit-text-stroke-width: 1px;
+  -webkit-text-stroke-color: white;
+  text-align: center;
+}
+
+.dinner {
+  background-image: repeating-linear-gradient(
+    65deg,
+    rgb(170 147 19 / 30%),
+    rgb(170 147 19 / 30%) 4px,
+    transparent 4px,
+    transparent 9px
+  );
+}
+
+.holiday {
+  background-image: repeating-linear-gradient(
+    135deg,
+    rgb(244 67 54 / 10%),
+    rgb(244 67 54 / 10%) 4px,
+    transparent 4px,
+    transparent 9px
+  );
 }

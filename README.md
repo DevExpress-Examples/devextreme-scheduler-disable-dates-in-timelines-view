@@ -11,7 +11,7 @@ This example demonstrates how to create a scheduler with disabled dates in the t
 
 The main idea is to validate the process of adding and updating appointments with the `onAppointmentFormOpening`, `onAppointmentAdding`, and `onAppointmentUpdating` handlers. To visually highlight cells that cannot be edited, set a function for the `dataCellTemplate` property. This function will affect the appointment customization.
 
-<div align="center"><img alt="Scheduler for DevExtreme - How to disable dates in the timeline view" src="dx-scheduler-disable-dates-in-timelines-view.png" /></div>
+<div align="center"><img alt="Scheduler for DevExtreme - How to disable dates in the timeline view" src="images/dx-scheduler-disable-dates-in-timelines-view.png" /></div>
 
 ## Files to Review
 
@@ -22,11 +22,11 @@ The main idea is to validate the process of adding and updating appointments wit
     - [index.html](jQuery/src/index.html)
     - [index.js](jQuery/src/index.js)
 - **React**
-    - [App.js](React/src/App.js)
+    - [App.tsx](React/src/App.tsx)
 - **Vue**
-    - [App.vue](Vue/src/App.vue)
+    - [HomeContent.vue](Vue/src/components/HomeContent.vue)
 - **ASP.NET Core**    
-    - [Index.cshtml](ASP.NET%20Core/Views/Scheduler/Index.cshtml)
+    - [Index.cshtml](ASP.NET%20Core/Views/Home/Index.cshtml)
 
 ## Documentation
 
