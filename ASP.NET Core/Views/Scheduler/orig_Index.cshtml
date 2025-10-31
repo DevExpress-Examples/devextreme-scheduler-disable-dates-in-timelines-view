@@ -1,0 +1,139 @@
+@model IEnumerable<ASP_NET_Core.Models.Appoinment>
+
+@(Html.DevExtreme().Scheduler()
+    .ID("scheduler")
+    .DataSource(Model)
+    .TextExpr("Text")
+    .StartDateExpr("StartDate")
+    .EndDateExpr("EndDate")
+    .Views(views =>
+    {
+        views.Add()
+            .Type(SchedulerViewType.TimelineDay)
+            .IntervalCount(3);
+    })
+    .CurrentView(SchedulerViewType.TimelineDay)
+    .CurrentDate(new DateTime(2021, 5, 3))
+    .StartDayHour(9)
+    .EndDayHour(19)
+    .CellDuration(60)
+    .Height(600)
+    .DataCellTemplate(new JS("renderCellTemplate"))
+    .OnAppointmentFormOpening("onAppointmentFormOpening")
+    .OnAppointmentAdding("onAppointmentChanging")
+    .OnAppointmentUpdating("onAppointmentChanging")
+)
+
+<script>
+    var dinnerTime = { start: 12, end: 13 };
+
+    var holiday = {
+        date: new Date(2021, 4, 4),
+        name: 'Star Wars Day'
+    };
+
+    function renderCellTemplate(itemData, itemIndex, itemElement) {
+        var startDate = itemData.startDate;
+        var endDate = itemData.endDate;
+
+        var isHolidayCell = isHoliday(startDate, endDate);
+        var isDinnerCell = isDinner(startDate, endDate);
+
+        var element = $(`<div>${getCellText(itemData)}</div>`);
+
+        if (isHolidayCell) {
+            element.addClass('holiday');
+        }
+
+        if (isDinnerCell) {
+            element.addClass('dinner');
+        }
+
+        return itemElement.append(element);
+    }
+
+    function getCellText(itemData) {
+        const startDate = itemData.startDate;
+        const endDate = itemData.endDate;
+
+        const isHoliday = this.isHoliday(startDate, endDate);
+        const isDinner = this.isDinner(startDate, endDate);
+
+        if (isHoliday) {
+            return holiday.name;
+        } else if (isDinner) {
+            return "Dinner Time";
+        }
+
+        return itemData.text;
+    }
+
+    function isHoliday(startDate, endDate) {
+        return holiday.date.toLocaleDateString() === startDate.toLocaleDateString() &&
+            holiday.date.toLocaleDateString() === endDate.toLocaleDateString();
+    }
+
+    function hasIntersection(startA, endA, startB, endB) {
+        if ((startA <= startB && endB <= endA) ||
+            (startB <= startA && endA <= endB)) {
+            return true;
+        }
+
+        return (startA < startB && startB < endA) ||
+            (startA < endB && endB < endA);
+    }
+
+    function isDinner(startDate, endDate) {
+        var todayDinnerStart = new Date(startDate).setHours(dinnerTime.start, 0, 0, 0);
+        var todayDinnerEnd = new Date(endDate).setHours(dinnerTime.end, 0, 0, 0);
+
+        return hasIntersection(
+            todayDinnerStart, todayDinnerEnd,
+            startDate.getTime(), endDate.getTime()
+        );
+    }
+
+    function onAppointmentChanging(e) {
+        var startDate = e.appointmentData
+            ? new Date(e.appointmentData.StartDate)
+            : new Date(e.newData.StartDate);
+
+        var endDate = e.appointmentData
+            ? new Date(e.appointmentData.EndDate)
+            : new Date(e.newData.EndDate);
+
+        if (!isValidAppointmentDate(startDate, endDate)) {
+            e.cancel = true;
+            notifyDisableDate();
+        }
+    }
+
+    function onAppointmentFormOpening(e) {
+        var startDate = new Date(e.appointmentData.startDate);
+        var endDate = new Date(e.appointmentData.endDate);
+
+        if (!isValidAppointmentDate(startDate, endDate)) {
+            e.cancel = true;
+            notifyDisableDate();
+        }
+        applyDisableDatesToDateEditors(e.form);
+    }
+
+    function isValidAppointmentDate(startDate, endDate) {
+        return !isHoliday(startDate, endDate) && !isDinner(startDate, endDate);
+    }
+
+    function applyDisableDatesToDateEditors(form) {
+        var holidaysDate = holiday.date;
+
+        var startDateEditor = form.getEditor('StartDate');
+        startDateEditor.option('disabledDates', [holidaysDate]);
+
+        var endDateEditor = form.getEditor('EndDate');
+        endDateEditor.option('disabledDates', [holidaysDate]);
+    }
+
+    function notifyDisableDate() {
+        DevExpress.ui.notify("This date is disabled", "warning", 500);
+    }
+</script>
