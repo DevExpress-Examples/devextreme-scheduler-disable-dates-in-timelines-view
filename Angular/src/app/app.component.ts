@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import notify from 'devextreme/ui/notify';
 import { DxSchedulerTypes } from 'devextreme-angular/ui/scheduler';
+import dxForm from 'devextreme/ui/form';
 import {
   AppointmentData,
   Holiday,
@@ -8,6 +9,7 @@ import {
   SchedulerView,
   DataCellTemplate,
 } from './app.types';
+import { appointments } from './app.data';
 
 @Component({
   selector: 'app-root',
@@ -15,73 +17,7 @@ import {
   styleUrls: ['./app.component.scss'],
 })
 export class AppComponent {
-  dataSource: AppointmentData[] = [
-    {
-      text: 'Website Re-Design Plan',
-      startDate: new Date(2021, 4, 5, 9, 30),
-      endDate: new Date(2021, 4, 5, 11, 30),
-    },
-    {
-      text: 'Install New Router in Dev Room',
-      startDate: new Date(2021, 4, 6, 13),
-      endDate: new Date(2021, 4, 6, 14),
-    },
-    {
-      text: 'Approve Personal Computer Upgrade Plan',
-      startDate: new Date(2021, 4, 3, 10),
-      endDate: new Date(2021, 4, 3, 11),
-    },
-    {
-      text: 'Final Budget Review',
-      startDate: new Date(2021, 4, 5, 13, 30),
-      endDate: new Date(2021, 4, 5, 15),
-    },
-    {
-      text: 'New Brochures',
-      startDate: new Date(2021, 4, 6, 15),
-      endDate: new Date(2021, 4, 6, 16, 15),
-    },
-    {
-      text: 'Install New Database',
-      startDate: new Date(2021, 4, 3, 9, 45),
-      endDate: new Date(2021, 4, 3, 12),
-    },
-    {
-      text: 'Approve New Online Marketing Strategy',
-      startDate: new Date(2021, 4, 3, 14, 30),
-      endDate: new Date(2021, 4, 3, 16, 30),
-    },
-    {
-      text: 'Upgrade Personal Computers',
-      startDate: new Date(2021, 4, 6, 15, 30),
-      endDate: new Date(2021, 4, 6, 16, 45),
-    },
-    {
-      text: 'Prepare 2021 Marketing Plan',
-      startDate: new Date(2021, 4, 3, 13),
-      endDate: new Date(2021, 4, 3, 15),
-    },
-    {
-      text: 'Brochure Design Review',
-      startDate: new Date(2021, 5, 1, 15, 30),
-      endDate: new Date(2021, 5, 2),
-    },
-    {
-      text: 'Create Icons for Website',
-      startDate: new Date(2021, 4, 5, 10),
-      endDate: new Date(2021, 4, 5, 11),
-    },
-    {
-      text: 'Upgrade Server Hardware',
-      startDate: new Date(2021, 4, 5, 16, 30),
-      endDate: new Date(2021, 4, 5, 18),
-    },
-    {
-      text: 'Launch New Website',
-      startDate: new Date(2021, 4, 5, 14, 30),
-      endDate: new Date(2021, 4, 5, 16, 10),
-    },
-  ];
+  dataSource: AppointmentData[] = appointments;
 
   currentDate: Date = new Date(2021, 4, 3);
 
@@ -142,14 +78,16 @@ export class AppComponent {
     );
   }
 
-  onAppointmentChanging(e: any): void {
-    const startDate = e.appointmentData
-      ? new Date(e.appointmentData.startDate)
-      : new Date(e.newData.startDate);
+  onAppointmentAdding(e: DxSchedulerTypes.AppointmentAddingEvent): void {
+    const appointmentStartDate = e.appointmentData.startDate;
+    const appointmentEndDate = e.appointmentData.endDate;
 
-    const endDate = e.appointmentData
-      ? new Date(e.appointmentData.endDate)
-      : new Date(e.newData.endDate);
+    if (!appointmentStartDate || !appointmentEndDate) {
+      return;
+    }
+
+    const startDate = new Date(appointmentStartDate);
+    const endDate = new Date(appointmentEndDate);
 
     if (!this.isValidAppointmentDate(startDate, endDate)) {
       e.cancel = true;
@@ -157,13 +95,35 @@ export class AppComponent {
     }
   }
 
-  onAppointmentFormOpening(e: any): void {
-    const startDate = new Date(e.appointmentData.startDate);
-    const endDate = new Date(e.appointmentData.endDate);
+  onAppointmentUpdating(e: DxSchedulerTypes.AppointmentUpdatingEvent): void {
+    const startDate = new Date(e.newData.startDate);
+    const endDate = new Date(e.newData.endDate);
 
     if (!this.isValidAppointmentDate(startDate, endDate)) {
       e.cancel = true;
       this.notifyDisableDate();
+    }
+  }
+
+  onAppointmentFormOpening(e: DxSchedulerTypes.AppointmentFormOpeningEvent): void {
+    if (!e.appointmentData) {
+      return;
+    }
+
+    const appointmentStartDate = e.appointmentData.startDate;
+    const appointmentEndDate = e.appointmentData.endDate;
+
+    if (!appointmentStartDate || !appointmentEndDate) {
+      return;
+    }
+
+    const startDate = new Date(appointmentStartDate);
+    const endDate = new Date(appointmentEndDate);
+
+    if (!this.isValidAppointmentDate(startDate, endDate)) {
+      e.cancel = true;
+      this.notifyDisableDate();
+      return;
     }
     this.applyDisableDatesToDateEditors(e.form);
   }
@@ -172,14 +132,18 @@ export class AppComponent {
     return !this.isHoliday(startDate, endDate) && !this.isDinner(startDate, endDate);
   }
 
-  applyDisableDatesToDateEditors(form: any): void {
+  applyDisableDatesToDateEditors(form: dxForm): void {
     const holidayDate = this.holiday.date;
 
     const startDateEditor = form.getEditor('startDate');
-    startDateEditor.option('disabledDates', [holidayDate]);
+    if (startDateEditor) {
+      startDateEditor.option('disabledDates', [holidayDate]);
+    }
 
     const endDateEditor = form.getEditor('endDate');
-    endDateEditor.option('disabledDates', [holidayDate]);
+    if (endDateEditor) {
+      endDateEditor.option('disabledDates', [holidayDate]);
+    }
   }
 
   getCellText(cell: DataCellTemplate): string {

@@ -3,80 +3,15 @@ import './App.css';
 import 'devextreme/dist/css/dx.material.blue.light.compact.css';
 import Scheduler from 'devextreme-react/scheduler';
 import notify from 'devextreme/ui/notify';
+import type { SchedulerTypes } from 'devextreme-react/scheduler';
+import type dxForm from 'devextreme/ui/form';
 import type {
-  AppointmentData,
   Holiday,
   DinnerTime,
   DataCellProps,
 } from './types';
-
-const data: AppointmentData[] = [
-  {
-    text: 'Website Re-Design Plan',
-    startDate: new Date(2021, 4, 5, 9, 30),
-    endDate: new Date(2021, 4, 5, 11, 30),
-  },
-  {
-    text: 'Install New Router in Dev Room',
-    startDate: new Date(2021, 4, 6, 13),
-    endDate: new Date(2021, 4, 6, 14),
-  },
-  {
-    text: 'Approve Personal Computer Upgrade Plan',
-    startDate: new Date(2021, 4, 3, 10),
-    endDate: new Date(2021, 4, 3, 11),
-  },
-  {
-    text: 'Final Budget Review',
-    startDate: new Date(2021, 4, 5, 13, 30),
-    endDate: new Date(2021, 4, 5, 15),
-  },
-  {
-    text: 'New Brochures',
-    startDate: new Date(2021, 4, 6, 15),
-    endDate: new Date(2021, 4, 6, 16, 15),
-  },
-  {
-    text: 'Install New Database',
-    startDate: new Date(2021, 4, 3, 9, 45),
-    endDate: new Date(2021, 4, 3, 12),
-  },
-  {
-    text: 'Approve New Online Marketing Strategy',
-    startDate: new Date(2021, 4, 3, 14, 30),
-    endDate: new Date(2021, 4, 3, 16, 30),
-  },
-  {
-    text: 'Upgrade Personal Computers',
-    startDate: new Date(2021, 4, 6, 15, 30),
-    endDate: new Date(2021, 4, 6, 16, 45),
-  },
-  {
-    text: 'Prepare 2021 Marketing Plan',
-    startDate: new Date(2021, 4, 3, 13),
-    endDate: new Date(2021, 4, 3, 15),
-  },
-  {
-    text: 'Brochure Design Review',
-    startDate: new Date(2021, 5, 1, 15, 30),
-    endDate: new Date(2021, 5, 2),
-  },
-  {
-    text: 'Create Icons for Website',
-    startDate: new Date(2021, 4, 5, 10),
-    endDate: new Date(2021, 4, 5, 11),
-  },
-  {
-    text: 'Upgrade Server Hardware',
-    startDate: new Date(2021, 4, 5, 16, 30),
-    endDate: new Date(2021, 4, 5, 18),
-  },
-  {
-    text: 'Launch New Website',
-    startDate: new Date(2021, 4, 5, 14, 30),
-    endDate: new Date(2021, 4, 5, 16, 10),
-  },
-];
+import { appointments } from './data';
+import DataCellComponent from './DataCellComponent';
 
 const views = [
   {
@@ -86,7 +21,7 @@ const views = [
 ];
 
 function App(): JSX.Element {
-  const schedulerRef = useRef<any>(null);
+  const schedulerRef = useRef(null);
 
   const dinnerTime: DinnerTime = { start: 12, end: 13 };
 
@@ -142,24 +77,30 @@ function App(): JSX.Element {
     );
   }, []);
 
-  const applyDisableDatesToDateEditors = useCallback((form: any): void => {
+  const applyDisableDatesToDateEditors = useCallback((form: dxForm): void => {
     const holidayDate = holiday.date;
 
     const startDateEditor = form.getEditor('startDate');
-    startDateEditor.option('disabledDates', [holidayDate]);
+    if (startDateEditor) {
+      startDateEditor.option('disabledDates', [holidayDate]);
+    }
 
     const endDateEditor = form.getEditor('endDate');
-    endDateEditor.option('disabledDates', [holidayDate]);
+    if (endDateEditor) {
+      endDateEditor.option('disabledDates', [holidayDate]);
+    }
   }, [holiday.date]);
 
-  const onAppointmentChanging = useCallback((e: any): void => {
-    const startDate = e.appointmentData
-      ? new Date(e.appointmentData.startDate)
-      : new Date(e.newData.startDate);
+  const onAppointmentAdding = useCallback((e: SchedulerTypes.AppointmentAddingEvent): void => {
+    const appointmentStartDate = e.appointmentData.startDate;
+    const appointmentEndDate = e.appointmentData.endDate;
 
-    const endDate = e.appointmentData
-      ? new Date(e.appointmentData.endDate)
-      : new Date(e.newData.endDate);
+    if (!appointmentStartDate || !appointmentEndDate) {
+      return;
+    }
+
+    const startDate = new Date(appointmentStartDate);
+    const endDate = new Date(appointmentEndDate);
 
     if (!isValidAppointmentDate(startDate, endDate)) {
       e.cancel = true;
@@ -167,13 +108,35 @@ function App(): JSX.Element {
     }
   }, [isValidAppointmentDate, notifyDisableDate]);
 
-  const onAppointmentFormOpening = useCallback((e: any): void => {
-    const startDate = new Date(e.appointmentData.startDate);
-    const endDate = new Date(e.appointmentData.endDate);
+  const onAppointmentUpdating = useCallback((e: SchedulerTypes.AppointmentUpdatingEvent): void => {
+    const startDate = new Date(e.newData.startDate);
+    const endDate = new Date(e.newData.endDate);
 
     if (!isValidAppointmentDate(startDate, endDate)) {
       e.cancel = true;
       notifyDisableDate();
+    }
+  }, [isValidAppointmentDate, notifyDisableDate]);
+
+  const onAppointmentFormOpening = useCallback((e: SchedulerTypes.AppointmentFormOpeningEvent): void => {
+    if (!e.appointmentData) {
+      return;
+    }
+
+    const appointmentStartDate = e.appointmentData.startDate;
+    const appointmentEndDate = e.appointmentData.endDate;
+
+    if (!appointmentStartDate || !appointmentEndDate) {
+      return;
+    }
+
+    const startDate = new Date(appointmentStartDate);
+    const endDate = new Date(appointmentEndDate);
+
+    if (!isValidAppointmentDate(startDate, endDate)) {
+      e.cancel = true;
+      notifyDisableDate();
+      return;
     }
     applyDisableDatesToDateEditors(e.form);
   }, [isValidAppointmentDate, notifyDisableDate, applyDisableDatesToDateEditors]);
@@ -199,38 +162,20 @@ function App(): JSX.Element {
     return cell.text || '';
   }, [isHoliday, isDinner, holiday.name]);
 
-  const DataCellComponent = useCallback((props: any): JSX.Element => {
-    // Handle different possible data structures
-    const cellData = props.data || props;
-    
-    if (!cellData || !cellData.startDate || !cellData.endDate) {
-      return <div></div>;
-    }
-
-    const { startDate, endDate } = cellData;
-    const cssClasses = [];
-
-    const isHolidayCell = isHoliday(startDate, endDate);
-    const isDinnerCell = isDinner(startDate, endDate);
-
-    if (isHolidayCell) {
-      cssClasses.push('holiday');
-    } else if (isDinnerCell) {
-      cssClasses.push('dinner');
-    }
-
-    return (
-      <div className={cssClasses.join(' ')}>
-        {getCellText(cellData)}
-      </div>
-    );
-  }, [isHoliday, isDinner, getCellText]);
+  const dataCellRender = useCallback((data: DataCellProps) => (
+    <DataCellComponent
+      data={data}
+      isHoliday={isHoliday}
+      isDinner={isDinner}
+      getCellText={getCellText}
+    />
+  ), [isHoliday, isDinner, getCellText]);
 
   return (
     <div id="app-container">
       <Scheduler
         ref={schedulerRef}
-        dataSource={data}
+        dataSource={appointments}
         views={views}
         defaultCurrentView="timelineDay"
         defaultCurrentDate={currentDate}
@@ -238,10 +183,10 @@ function App(): JSX.Element {
         startDayHour={9}
         endDayHour={19}
         cellDuration={60}
-        dataCellComponent={DataCellComponent}
+        dataCellRender={dataCellRender}
         onAppointmentFormOpening={onAppointmentFormOpening}
-        onAppointmentAdding={onAppointmentChanging}
-        onAppointmentUpdating={onAppointmentChanging}
+        onAppointmentAdding={onAppointmentAdding}
+        onAppointmentUpdating={onAppointmentUpdating}
       />
     </div>
   );
