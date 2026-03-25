@@ -2,11 +2,8 @@ import type { DataCellProps } from './types';
 
 interface DataCellComponentProps {
   data: DataCellProps;
-  // eslint-disable-next-line no-unused-vars
   isHoliday: (startDate: Date, endDate: Date) => boolean;
-  // eslint-disable-next-line no-unused-vars
   isDinner: (startDate: Date, endDate: Date) => boolean;
-  // eslint-disable-next-line no-unused-vars
   getCellText: (cell: DataCellProps) => string;
 }
 
