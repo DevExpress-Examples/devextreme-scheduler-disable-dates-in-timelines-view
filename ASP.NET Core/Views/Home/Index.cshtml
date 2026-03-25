@@ -128,10 +128,14 @@
         var holidaysDate = holiday.date;
 
         var startDateEditor = form.getEditor('StartDate');
-        startDateEditor.option('disabledDates', [holidaysDate]);
+        if (startDateEditor) {
+            startDateEditor.option('disabledDates', [holidaysDate]);
+        }
 
         var endDateEditor = form.getEditor('EndDate');
-        endDateEditor.option('disabledDates', [holidaysDate]);
+        if (endDateEditor) {
+            endDateEditor.option('disabledDates', [holidaysDate]);
+        }
     }
 
     function notifyDisableDate() {

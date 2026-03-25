@@ -84,12 +84,17 @@ $(() => {
   }
 
   function onAppointmentFormOpening(e) {
+    if (!e.appointmentData) {
+      return;
+    }
+
     const startDate = new Date(e.appointmentData.startDate);
     const endDate = new Date(e.appointmentData.endDate);
 
     if (!isValidAppointmentDate(startDate, endDate)) {
       e.cancel = true;
       notifyDisableDate();
+      return;
     }
     applyDisableDatesToDateEditors(e.form);
   }
@@ -139,10 +144,14 @@ $(() => {
     const holidayDate = holiday.date;
 
     const startDateEditor = form.getEditor('startDate');
-    startDateEditor.option('disabledDates', [holidayDate]);
+    if (startDateEditor) {
+      startDateEditor.option('disabledDates', [holidayDate]);
+    }
 
     const endDateEditor = form.getEditor('endDate');
-    endDateEditor.option('disabledDates', [holidayDate]);
+    if (endDateEditor) {
+      endDateEditor.option('disabledDates', [holidayDate]);
+    }
   }
 
   function notifyDisableDate() {
