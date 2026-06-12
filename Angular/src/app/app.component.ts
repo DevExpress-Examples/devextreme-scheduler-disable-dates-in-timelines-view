@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, ChangeDetectionStrategy } from '@angular/core';
 import notify from 'devextreme/ui/notify';
 import { DxSchedulerTypes } from 'devextreme-angular/ui/scheduler';
 import dxForm from 'devextreme/ui/form';
@@ -15,6 +15,7 @@ import { appointments } from './app.data';
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss'],
+  changeDetection: ChangeDetectionStrategy.Eager,
   standalone: false,
 })
 export class AppComponent {
